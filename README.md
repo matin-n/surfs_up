@@ -45,12 +45,48 @@ As expected, the December temperatures is lower when compared to June as the Win
 - Average temperature: 71 °F
 - Maximum temperature: 83 °F
 
-
+### Climate Analysis API
+#### Available Routes
+```
+/api/v1.0/precipitation
+/api/v1.0/stations
+/api/v1.0/tobs
+/api/v1.0/temp/{start}/{end}
+```
 
 ## Summary
-- Minimum temperature
+- Temperature
   - The minimum temperature in December is lower when compared to June
-- Average temperature
   - The average temperature in June is higher when compared to December
-- Max temperatures
   - The maximum temperature in June is slightly high when compared to December
+
+Additionally, a query to determine the temperature between a range of dates could provide additional insight. For example, a function like this would output the results between two specified dates:
+
+```python
+def calc_temps(start_date, end_date):
+
+    start_date = datetime.strptime(start_date, "%Y-%m-%d")
+    end_date = datetime.strptime(end_date, "%Y-%m-%d")
+
+    temperature_results = (
+        session.query(
+            func.min(Measurement.tobs),
+            func.avg(Measurement.tobs),
+            func.max(Measurement.tobs),
+        )
+            .filter(Measurement.date >= start_date)
+            .filter(Measurement.date <= end_date)
+            .all()
+    )
+
+    # return minimum, average, and max temperature
+    return temperature_results[0]
+```
+
+It would be interesting to analyze various dates daily, monthly, yearly, or by seasons and conduct further analysis. Then, a plot could be created to visualize, illustrate and determine any relationships within the data.
+
+  ## Resources
+  - Data Source: [`hawaii.sqlite`](https://github.com/matin-n/surfs_up/blob/main/hawaii.sqlite)
+  - Source Code: [`climate_analysis.ipynb`](https://github.com/matin-n/surfs_up/blob/main/climate_analysis.ipynb), [`SurfsUp_Challenge.ipynb`](https://github.com/matin-n/surfs_up/blob/main/SurfsUp_Challenge.ipynb)
+  - Software: [`Python 3.6.10`](https://www.python.org/downloads/release/python-3610/), [`Jupyter Notebook`](https://jupyter.org/), [`JetBrains DataSpell`](https://www.jetbrains.com/dataspell/)
+  - Libraries: [`Pandas`](https://pandas.pydata.org/), [`Matplotlib`](https://matplotlib.org/), [`SQLAlchemy`](https://www.sqlalchemy.org/), [`Flask`](https://github.com/pallets/flask), [`SQLite`](https://sqlite.org/index.html)
